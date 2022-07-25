@@ -8,6 +8,7 @@ export interface PortfolioType extends Document {
   skills: string;
   content: string;
   contentText: string;
+  thumbnail: string;
   scraps: Types.ObjectId[];
   recommends: Types.ObjectId[];
   comments: Types.ObjectId[];

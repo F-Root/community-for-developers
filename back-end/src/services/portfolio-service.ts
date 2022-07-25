@@ -6,6 +6,8 @@ import {
   SearchInfo,
 } from "../interfaces/portfolio-interface";
 import { AppError } from "../middlewares/error-handler";
+import { deleteImage } from "../utils";
+import { PortfolioType } from "../db/schemas/portfolio-schema";
 
 class PortfolioService {
   constructor(private portfolioModel: PortfolioModel) {
@@ -151,6 +153,7 @@ class PortfolioService {
         "Forbidden Error"
       );
     }
+    await deleteImage((<PortfolioType>portfolio).thumbnail);
     return await this.portfolioModel.deleteById(portId);
   }
 }
