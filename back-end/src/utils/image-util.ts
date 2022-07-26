@@ -11,16 +11,20 @@ import {
 } from "firebase/storage";
 import { AppError } from "../middlewares";
 
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_APIKEY,
-  authDomain: process.env.FIREBASE_AUTHDOMAIN,
-  projectId: process.env.FIREBASE_PROJECTID,
-  storageBucket: process.env.FIREBASE_STORAGEBUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID,
-  appId: process.env.FIREBASE_APPID,
-};
+function firebaseInitialize() {
+  const firebaseConfig = {
+    apiKey: process.env.FIREBASE_APIKEY,
+    authDomain: process.env.FIREBASE_AUTHDOMAIN,
+    projectId: process.env.FIREBASE_PROJECTID,
+    storageBucket: process.env.FIREBASE_STORAGEBUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGINGSENDERID,
+    appId: process.env.FIREBASE_APPID,
+  };
 
-const app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
+
+  return app;
+}
 
 // multer로 이미지 가져오기
 const upload = multer({
@@ -38,7 +42,7 @@ async function getImageUrl(image: Express.Multer.File) {
     const type = image.originalname.split(".")[1];
     const fileName = `${name}_${timestamp}.${type}`;
 
-    const storage = getStorage(app);
+    const storage = getStorage(firebaseInitialize());
     const imageRef = ref(storage, `images/${fileName}`);
     const metadata = {
       contentType: `image/${type}`,
@@ -57,7 +61,7 @@ async function getImageUrl(image: Express.Multer.File) {
 // image delete
 async function deleteImage(imgUrl: string) {
   try {
-    const storage = getStorage(app);
+    const storage = getStorage(firebaseInitialize());
     const imageRef = ref(storage, imgUrl);
     await deleteObject(imageRef);
   } catch (error) {
